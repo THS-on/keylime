@@ -12,7 +12,7 @@ with open('README.md', encoding="utf-8") as fh:
 
 setuptools.setup(
     name='keylime',
-    version='6.3.1',
+    version='6.3.1a1',
     description=(
         'TPM-based key bootstrapping and system '
         'integrity measurement system for cloud'),
