@@ -10,6 +10,8 @@ import time
 import os
 import sys
 
+from typing import Optional
+
 import requests
 import zmq
 
@@ -22,7 +24,7 @@ from keylime.common import retry
 
 
 logger = keylime_logging.init_logging('revocation_notifier')
-broker_proc = None
+broker_proc: Optional[Process] = None
 
 _SOCKET_PATH = "/var/run/keylime/keylime.verifier.ipc"
 
@@ -68,7 +70,9 @@ def stop_broker():
             os.remove(f"ipc://{_SOCKET_PATH}")
         logger.info("Stopping revocation notifier...")
         broker_proc.terminate()
-        broker_proc.join()
+        broker_proc.join(2)
+        if broker_proc.is_alive():
+            broker_proc.kill()
 
 
 def notify(tosend):
