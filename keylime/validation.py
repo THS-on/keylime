@@ -1,0 +1,115 @@
+import argparse
+import asyncio
+import json
+import signal
+from typing import Any
+
+import tornado
+from tornado.web import Application, RequestHandler
+
+from keylime.agentstates import AgentAttestState
+from keylime.ima import ima
+from keylime.ima.file_signatures import ImaKeyrings
+from keylime.mba import mba
+
+mba.load_imports()
+
+
+class BaseHandler(RequestHandler):
+    def return_json(self, data, code):
+        json_response_bytes = json.dumps(data)
+        self.set_status(code)
+        self.set_header("Content-Type", "application/json")
+        self.write(json_response_bytes)
+        self.finish()
+
+
+class MeasuredBootValidationHandler(BaseHandler):
+    def post(self):
+        try:
+            data = json.loads(self.request.body.decode("utf-8"))
+            agent_id = data["agent_id"]
+            hash_alg = data["hash_alg"]
+            mb_refstate = data["mb_refstate"]
+            mb_measurement_list = data["mb_measurement_list"]
+            pcrs_inquote = set([int(x) for x in data["pcrs_inquote"]])
+        except ValueError as e:
+            self.return_json({"error": f"Unexpected payload format: {e}"}, 422)
+            return
+        mb_pcrs_hashes, boot_aggregates, mb_measurement_data, mb_parse_failure = mba.bootlog_parse(
+            mb_measurement_list, hash_alg
+        )
+        if mb_parse_failure:
+            self.return_json({"error": f"Parser error: {mb_parse_failure.get_event_ids()}"}, 422)
+            return
+        mb_failure = mba.bootlog_evaluate(mb_refstate, mb_measurement_data, pcrs_inquote, agent_id)
+        failure = None
+        if mb_failure:
+            failure = mb_failure.highest_severity_event.event_id
+        response = {"failure": failure}
+        self.return_json(response, 200)
+
+
+class IMAHandler(BaseHandler):
+    def post(self):
+        try:
+            data = json.loads(self.request.body.decode("utf-8"))
+            agent_id = data["agent_id"]
+            hash_alg = data["hash_alg"]
+            ima_measurement_list = data["ima_measurement_list"]
+            runtime_policy = data["runtime_policy"]
+            pcrval = data["pcrval"]
+            boot_aggregates = data["boot_aggregates"]
+        except ValueError as e:
+            self.return_json({"error": f"Unexpected payload format: {e}"}, 422)
+            return
+
+        agentAttestState = AgentAttestState(agent_id)
+        ima_keyrings = ImaKeyrings()
+
+        _, ima_failure = ima.process_measurement_list(
+            agentAttestState,
+            ima_measurement_list.split("\n"),
+            runtime_policy,
+            pcrval=pcrval,
+            ima_keyrings=ima_keyrings,
+            boot_aggregates=boot_aggregates,
+            hash_alg=hash_alg,
+        )
+
+        failure = None
+        if ima_failure:
+            failure = ima_failure.highest_severity_event.event_id
+        response = {"failure": failure}
+        self.return_json(response, 200)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("port")
+    args = parser.parse_args()
+
+    app = Application([(r"/mb/validate", MeasuredBootValidationHandler), (r"/ima/validate", IMAHandler)])
+    sockets = tornado.netutil.bind_sockets(int(args.port))
+    server = tornado.httpserver.HTTPServer(app)
+    server.add_sockets(sockets)
+
+    def server_sig_handler(*_: Any) -> None:
+        server.stop()
+
+        # Wait for all connections to be closed and then stop ioloop
+        async def stop() -> None:
+            await server.close_all_connections()
+            tornado.ioloop.IOLoop.current().stop()
+
+        asyncio.ensure_future(stop())
+
+    loop = asyncio.get_event_loop()
+    loop.add_signal_handler(signal.SIGINT, server_sig_handler)
+    loop.add_signal_handler(signal.SIGTERM, server_sig_handler)
+
+    tornado.ioloop.IOLoop.current().start()
+
+
+if __name__ == "__main__":
+    main()
