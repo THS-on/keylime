@@ -551,6 +551,19 @@ class KeySubset(IterateTest):
         )
 
 
+class KeySubsetMulti(IterateTest):
+    def __init__(self, sig_types: typing.List[str], keys: typing.Iterable[typing.Mapping[str, str]]):
+        tests = [
+            And(
+                FieldTest("SignatureType", StringEqual(sig_type)),
+                FieldTest("Keys", IterateTest(SignatureSetMember(keys))),
+            )
+            for sig_type in sig_types
+        ]
+
+        super().__init__(Or(*tests))
+
+
 class FieldsMismatchError(Exception):
     """Represents a mismatch between expected and actual sets of field names."""
 
@@ -657,6 +670,7 @@ class EvEfiActionTest(Test):
     """Test for valid EV_EFI_ACTION entry values"""
 
     _expected_strings = {
+        1: ["Entering ROM Based Setup"],
         4: ["Calling EFI Application from Boot Option", "Returning from EFI Application from Boot Option"],
         5: [
             "Exit Boot Services Invocation",
