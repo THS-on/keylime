@@ -46,7 +46,9 @@ class MeasuredBootValidationHandler(BaseHandler):
         failure = None
         if mb_failure:
             failure = mb_failure.highest_severity_event.event_id
-        response = {"failure": failure}
+        # Convert to hex values
+        mb_pcrs_hashes = {k: hex(v) for k, v in mb_pcrs_hashes.items()}
+        response = {"failure": failure, "mb_pcrs_hashes": mb_pcrs_hashes, "boot_aggregates": boot_aggregates}
         self.return_json(response, 200)
 
 
@@ -81,6 +83,7 @@ class IMAHandler(BaseHandler):
         if ima_failure:
             failure = ima_failure.highest_severity_event.event_id
         response = {"failure": failure}
+
         self.return_json(response, 200)
 
 
