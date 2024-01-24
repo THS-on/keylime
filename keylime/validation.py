@@ -1,18 +1,22 @@
 import argparse
 import asyncio
 import json
+import logging
 import signal
+import traceback
 from typing import Any
 
 import tornado
 from tornado.web import Application, RequestHandler
 
 from keylime.agentstates import AgentAttestState
+from keylime.common import algorithms
 from keylime.ima import ima
 from keylime.ima.file_signatures import ImaKeyrings
 from keylime.mba import mba
 
 mba.load_imports()
+logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(message)s")
 
 
 class BaseHandler(RequestHandler):
@@ -47,44 +51,52 @@ class MeasuredBootValidationHandler(BaseHandler):
         if mb_failure:
             failure = mb_failure.highest_severity_event.event_id
         # Convert to hex values
-        mb_pcrs_hashes = {k: hex(v) for k, v in mb_pcrs_hashes.items()}
+        mb_pcrs_hashes = {k: hex(v)[2:] for k, v in mb_pcrs_hashes.items()}
         response = {"failure": failure, "mb_pcrs_hashes": mb_pcrs_hashes, "boot_aggregates": boot_aggregates}
         self.return_json(response, 200)
 
 
 class IMAHandler(BaseHandler):
     def post(self):
+        logging.info("Got IMA request")
         try:
-            data = json.loads(self.request.body.decode("utf-8"))
-            agent_id = data["agent_id"]
-            hash_alg = data["hash_alg"]
-            ima_measurement_list = data["ima_measurement_list"]
-            runtime_policy = data["runtime_policy"]
-            pcrval = data["pcrval"]
-            boot_aggregates = data["boot_aggregates"]
-        except ValueError as e:
-            self.return_json({"error": f"Unexpected payload format: {e}"}, 422)
+            try:
+                data = json.loads(self.request.body.decode("utf-8"))
+                agent_id = data["agent_id"]
+                hash_alg = algorithms.Hash(data["hash_alg"])
+                ima_measurement_list = data["ima_measurement_list"]
+                runtime_policy = json.loads(data["runtime_policy"])
+                pcrval = data["pcrval"]
+                boot_aggregates = None
+            except ValueError as e:
+                logging.info(f"Key error {e}")
+                self.return_json({"error": f"Unexpected payload format: {e}"}, 422)
+                return
+
+            agentAttestState = AgentAttestState(agent_id)
+            ima_keyrings = ImaKeyrings()
+
+            _, ima_failure = ima.process_measurement_list(
+                agentAttestState,
+                ima_measurement_list.split("\n"),
+                runtime_policy,
+                pcrval=pcrval,
+                ima_keyrings=ima_keyrings,
+                boot_aggregates=boot_aggregates,
+                hash_alg=hash_alg,
+            )
+
+            failure = None
+            response = {}
+            if ima_failure:
+                failure = ima_failure.highest_severity_event.event_id
+                response["context"] = ima_failure.highest_severity_event.context
+            response["failure"] = failure
+
+            self.return_json(response, 200)
+        except Exception as e:
+            self.return_json({"error": f"Unexpected error: {traceback.format_exc()}"}, 422)
             return
-
-        agentAttestState = AgentAttestState(agent_id)
-        ima_keyrings = ImaKeyrings()
-
-        _, ima_failure = ima.process_measurement_list(
-            agentAttestState,
-            ima_measurement_list.split("\n"),
-            runtime_policy,
-            pcrval=pcrval,
-            ima_keyrings=ima_keyrings,
-            boot_aggregates=boot_aggregates,
-            hash_alg=hash_alg,
-        )
-
-        failure = None
-        if ima_failure:
-            failure = ima_failure.highest_severity_event.event_id
-        response = {"failure": failure}
-
-        self.return_json(response, 200)
 
 
 def main():
