@@ -1,0 +1,75 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0" version="24.7.6">
+  <diagram name="Seite-1" id="wHmpIrZyTU-4299_1Kro">
+    <mxGraphModel dx="1783" dy="994" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="6pwx4IM8mq2fx8B0i34o-1" target="6pwx4IM8mq2fx8B0i34o-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-18" value="6. continuously collects Evidence" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="6pwx4IM8mq2fx8B0i34o-17">
+          <mxGeometry x="-0.389" relative="1" as="geometry">
+            <mxPoint x="35" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-1" value="Verifier" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="10" y="180" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="6pwx4IM8mq2fx8B0i34o-2" target="6pwx4IM8mq2fx8B0i34o-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-6" value="&lt;div&gt;1. sends potential Endorsements &lt;br&gt;&lt;/div&gt;&lt;div&gt;(AK, EK/EK_cert) &amp;amp; metadata&lt;br&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="6pwx4IM8mq2fx8B0i34o-5">
+          <mxGeometry x="-0.0769" y="-6" relative="1" as="geometry">
+            <mxPoint x="7" y="-26" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-2" value="Agent" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="180" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-3" value="&lt;div&gt;Tenant&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="280" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-4" value="Registrar" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="180" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=horizontal;" edge="1" parent="1" source="6pwx4IM8mq2fx8B0i34o-4" target="6pwx4IM8mq2fx8B0i34o-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-8" value="&lt;div&gt;2. validates that EK and AK&amp;nbsp;&lt;/div&gt;&lt;div&gt;belong together&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="6pwx4IM8mq2fx8B0i34o-7">
+          <mxGeometry x="-0.1586" relative="1" as="geometry">
+            <mxPoint x="77" y="5" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.423;entryY=1.016;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="6pwx4IM8mq2fx8B0i34o-3" target="6pwx4IM8mq2fx8B0i34o-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-10" value="3. gets Endorsements &amp;amp; metadata" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="6pwx4IM8mq2fx8B0i34o-9">
+          <mxGeometry x="0.5701" y="-1" relative="1" as="geometry">
+            <mxPoint x="88" y="-25" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="6pwx4IM8mq2fx8B0i34o-3" target="6pwx4IM8mq2fx8B0i34o-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="400" y="350" />
+              <mxPoint x="340" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-14" value="&lt;div&gt;4. Validate EK&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;amp; collect Reference Values and Policies&lt;br&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="6pwx4IM8mq2fx8B0i34o-13">
+          <mxGeometry x="0.2803" relative="1" as="geometry">
+            <mxPoint x="11" y="20" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.464;entryY=0.988;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="6pwx4IM8mq2fx8B0i34o-3" target="6pwx4IM8mq2fx8B0i34o-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="6pwx4IM8mq2fx8B0i34o-16" value="&lt;div&gt;5. provision verifier with AK,&amp;nbsp;&lt;/div&gt;&lt;div&gt;Reference Values &amp;amp; Policies&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="6pwx4IM8mq2fx8B0i34o-15">
+          <mxGeometry x="-0.2324" y="-2" relative="1" as="geometry">
+            <mxPoint x="-8" y="22" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
